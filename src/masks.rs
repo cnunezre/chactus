@@ -209,9 +209,9 @@ pub fn mask_bishops_attack(square: u8) -> Bitboard {
 pub fn mask_rooks_attack(square: u8) -> Bitboard {
     let mut attacks = 0u64;
 
-    println!("square: {}", square);
-    let board: Bitboard = 0;
-    print_bitboard(set_bit_active(board, square));
+    // println!("square: {}", square);
+    // let board: Bitboard = 0;
+    // print_bitboard(set_bit_active(board, square));
 
     let target_rank: u8 = square / 8;
     let target_file: u8 = square % 8;
