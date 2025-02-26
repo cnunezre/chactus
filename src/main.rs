@@ -1,30 +1,34 @@
-struct Board {
-    pieces: [u64; 12],
-    turn: bool,
-}
+use crate::masks::{mask_rooks_attack, Side};
+use crate::utils::print_bitboard;
 
-fn get_bit(bitboard: u64, square: u64) -> bool {
-    bitboard & (1u64 << square) > 0
-}
+mod masks;
+mod utils;
 
-fn print_bitboard(bitboard: u64) {
-    //loop over rank
-    for r in 0..8 {
-        //loop over every file
-        for f in 0..8 {
-            if f == 0 {
-                print!("{}   ", 8 - r);
-            }
-            let square = r * 8 + f;
-            print!("{} ", if get_bit(bitboard, square) { 1 } else { 0 });
-        }
-        println!();
-    }
-    println!("\n    a b c d e f g h");
-    println!("    Bitboard: {}", bitboard);
-}
+type Bitboard = u64;
 
 fn main() {
-    println!("Elephant Chess Engine v.0\n");
-    print_bitboard(65);
+    println!("Chess Engine for Elephants v.0\n");
+    let mut white_pawns_attacks: [Bitboard; 64] = [0u64; 64];
+    let mut black_pawns_attacks: [Bitboard; 64] = [0u64; 64];
+    let mut knights_attacks: [Bitboard; 64] = [0u64; 64];
+    let mut king_attacks: [Bitboard; 64] = [0u64; 64];
+    let mut bishops_attacks: [Bitboard; 64] = [0u64;64];
+
+    for i in 0..64 {
+        white_pawns_attacks[i] = crate::masks::initialize_pawn_attack_by_square_number(Side::White, i as u8);
+        black_pawns_attacks[i] = crate::masks::initialize_pawn_attack_by_square_number(Side::Black, i as u8);
+        knights_attacks[i] = crate::masks::attack_knight_by_square_number(i as u8);
+        king_attacks[i] = crate::masks::attack_king_by_square_number((i as u8));
+        bishops_attacks[i] = crate::masks::mask_bishops_attack(i as u8);
+    }
+
+    print_bitboard(mask_rooks_attack(63));
+    // for i in 0..64 {
+    //     print_bitboard(white_pawns_attacks[i]);
+    //     print_bitboard(black_pawns_attacks[i]);
+    //     print_bitboard(knights_attacks[i]);
+    //     print_bitboard(king_attacks[i]);
+    //     print_bitboard(bishops_attacks[i]);
+    // }
+    //print_bitboard_rank(&[0]); }
 }
