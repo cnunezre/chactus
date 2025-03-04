@@ -132,6 +132,97 @@ pub fn attack_king_by_square_number(square_number: u8) -> Bitboard {
     attacks
 }
 
+pub fn bishops_attacks_on_the_fly(square: u8, blocking_piece: Bitboard) -> Bitboard {
+    let mut attacks = 0u64;
+
+    let target_rank: i8 = (square / 8) as i8;
+    let target_file: i8 = (square % 8) as i8;
+
+    let mut rank: i8 = 0;
+    let mut file: i8 = 0;
+
+    // going right and up
+    if target_rank < 7 && target_file < 7 {
+        rank = target_rank + 1;
+        file = target_file + 1;
+    } else {
+        rank = target_rank;
+        file = target_file;
+    }
+
+    while (rank <= 7 && file <= 7) {
+        let mask = (1u64 << (rank * 8 + file));
+        attacks = attacks | mask;
+        if (mask & blocking_piece) == 0 {
+            rank += 1;
+            file += 1;
+        } else { break; }
+    }
+
+    //going left and down
+    if target_rank > 0 && target_file > 0 {
+        rank = target_rank - 1;
+        file = target_file - 1;
+    } else {
+        rank = target_rank;
+        file = target_file;
+    }
+
+    while (rank >= 0 && file >= 0) {
+        let mask = (1u64 << (rank * 8 + file));
+        attacks = attacks | mask;
+        if (mask & blocking_piece) == 0 {
+            rank -= 1;
+            file -= 1;
+        } else {
+            break;
+        }
+    }
+
+    //going right and down
+    if target_rank > 0 && target_file < 7 {
+        rank = target_rank - 1;
+        file = target_file + 1;
+    } else {
+        rank = target_rank;
+        file = target_file;
+    }
+
+    while (rank >= 0 && file <= 7) {
+        let mask = (1u64 << (rank * 8 + file));
+        attacks = attacks | mask;
+        if (mask & blocking_piece) == 0 {
+            rank -= 1;
+            file += 1;
+        } else {
+            break;
+        }
+    }
+
+    //going left and up
+    if target_rank < 7 && target_file > 0 {
+        rank = target_rank + 1;
+        file = target_file - 1;
+    } else {
+        rank = target_rank;
+        file = target_file;
+    }
+
+    while (rank <= 7 && file >= 0) {
+        let mask = (1u64 << (rank * 8 + file));
+        attacks = attacks | mask;
+        if (mask & blocking_piece) == 0 {
+            rank += 1;
+            file -= 1;
+        } else {
+            break;
+        }
+    }
+
+    attacks
+}
+
+
 pub fn mask_bishops_attack(square: u8) -> Bitboard {
     let mut attacks = 0u64;
 
@@ -232,17 +323,71 @@ pub fn mask_rooks_attack(square: u8) -> Bitboard {
 
 
     //going left
-    let mut file:u8 = if (target_file > 0) { target_file - 1} else {target_file};
+    let mut file: u8 = if (target_file > 0) { target_file - 1 } else { target_file };
     while (file > 0) {
         attacks = attacks | (1u64 << (target_rank * 8 + file));
         file -= 1;
     }
 
     //going right
-    file = if (target_file < 7) { target_file + 1} else {target_file};
+    file = if (target_file < 7) { target_file + 1 } else { target_file };
     while (file < 7) {
         attacks = attacks | (1u64 << (target_rank * 8 + file));
         file += 1;
+    }
+
+    attacks
+}
+
+pub fn rooks_attack_on_the_fly(square: u8, blocking_piece: Bitboard) -> Bitboard {
+    let mut attacks = 0u64;
+
+    let target_rank: i8 = (square / 8) as i8;
+    let target_file: i8 = (square % 8) as i8;
+
+    // Going up
+    let mut rank: i8 = if target_rank < 7 { target_rank + 1 } else { target_rank };
+    while (rank <= 7) {
+        let mask = (1u64 << (rank * 8 + target_file));
+        attacks = attacks | mask;
+        if mask & blocking_piece == 0 {
+            rank += 1;
+        } else {
+            break;
+        }
+    }
+
+    //Going down
+    rank = if target_rank > 0 { target_rank - 1 } else { target_rank };
+    while (rank >= 0) {
+        let mask = (1u64 << (rank * 8 + target_file));
+        attacks = attacks | mask;
+        if mask & blocking_piece == 0 {
+            rank -= 1;
+        } else { break; }
+    }
+
+
+    //going left
+    let mut file: i8 = if (target_file > 0) { target_file - 1 } else { target_file };
+    while (file >= 0) {
+        let mask = (1u64 << (target_rank * 8 + file));
+        attacks = attacks | mask;
+        if mask & blocking_piece == 0 {
+            file -= 1;
+        } else {
+            break;
+        }
+    }
+
+    //going right
+    file = if (target_file < 7) { target_file + 1 } else { target_file };
+    while (file <= 7) {
+        let mask = (1u64 << (target_rank * 8 + file));
+        attacks = attacks | mask;
+        if mask & blocking_piece == 0 {
+            file += 1;
+        } else { break; }
     }
 
     attacks

@@ -103,3 +103,15 @@ fn print_bitboard_rank(ranks_to_check: &[u8]) {
     println!("Bitboard:\t{}", bitboard);
     print_bitboard(bitboard);
 }
+
+pub fn count_bits(board: Bitboard) {
+    let mut count = 0;
+    let mut board_aux: Bitboard = board;
+    loop {
+        board_aux &= board_aux - 1;
+        count += 1;
+        if ((board_aux | 0u64) == 0) {
+            break;
+        }
+    }
+}
