@@ -1,5 +1,5 @@
 use crate::masks::{attack_king_by_square_number, attack_knight_by_square_number, bishops_attacks_on_the_fly, initialize_pawn_attack_by_square_number, mask_rooks_attack, rooks_attack_on_the_fly, Side};
-use crate::utils::{count_bits, print_bitboard, set_bit_active};
+use crate::utils::{count_bits, from_square_to_algebraic_notation, get_lsb_index, get_msb_index, print_bitboard, set_bit_active};
 
 mod masks;
 mod utils;
@@ -30,11 +30,20 @@ fn main() {
     block = set_bit_active(block, 11);
 
     block = set_bit_active(block, 3);
-
     print_bitboard(block);
+    println!("{:064b}", block);
+    println!("trailing zeroes: {} leading zeroes: {}", get_lsb_index(block), get_msb_index(block));
+    println!("coordinate lsb: {} coordinate msb: {}", from_square_to_algebraic_notation(get_lsb_index(block)), from_square_to_algebraic_notation(get_msb_index(block)));
 
-    count_bits(block);
-    //print_bitboard(block);
+    let msb = set_bit_active(0u64, get_msb_index(block) as u8);
+    let lsb = set_bit_active(0u64, get_lsb_index(block) as u8);
+
+    print_bitboard(msb);
+    print_bitboard(lsb);
+
+    //count_bits(block);
+
+
 
     //print_bitboard(rooks_attack_on_the_fly(27, block));
     //for i in 0..64 {

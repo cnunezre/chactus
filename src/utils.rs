@@ -54,6 +54,10 @@ fn get_bitboard(square: &str) -> Bitboard {
 
 fn get_algebraic_notation(bitboard: Bitboard) -> String {
     let square = (bitboard as f64).log2() as u32;
+    from_square_to_algebraic_notation(square)
+}
+
+pub fn from_square_to_algebraic_notation(square: u32) -> String {
     let i = square % 8 + 'a' as u32;
     let file: char = char::from_u32(i as u32).unwrap();
     let rank: u32 = square / 8 + 1;
@@ -114,4 +118,12 @@ pub fn count_bits(board: Bitboard) {
             break;
         }
     }
+}
+
+pub fn get_lsb_index(board: Bitboard) -> u32{
+    board.trailing_zeros()
+}
+
+pub fn get_msb_index(board: Bitboard) -> u32{
+    63 - board.leading_zeros()
 }
